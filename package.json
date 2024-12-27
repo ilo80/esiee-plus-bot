@@ -1,0 +1,25 @@
+{
+  "name": "esiee-plus-bot",
+  "version": "1.0.0",
+  "description": "A bot discord developed in typescript to find available rooms at ESIEE Paris",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "npx ts-node src/index.ts"
+  },
+  "keywords": [
+    "esiee",
+    "esiee+",
+    "esieeplus",
+    "esiee-plus"
+  ],
+  "author": "ilo80",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "@types/node": "^22.10.2",
+    "ade-planning-api": "^1.0.2",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
