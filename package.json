@@ -1,7 +1,7 @@
 {
   "name": "esiee-plus-bot",
   "version": "1.0.0",
-  "description": "A bot discord developed in typescript to find available rooms at ESIEE Paris",
+  "description": "A discord bot developed in typescript to find available rooms at ESIEE Paris",
   "main": "src/index.ts",
   "scripts": {
     "start": "npx ts-node src/index.ts"
