@@ -19,7 +19,7 @@ export const doTimeRangeOverlap = (start1: string, end1: string, start2: string,
     return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
 };
 
-export const isValideDate = (date: string) => {
+export const isValidDate = (date: string) => {
     const parts = date.split('/').map(Number);
 
     if (parts.length !== 3) {
@@ -37,7 +37,7 @@ export const isValideDate = (date: string) => {
     return dateObj.getDate() === parts[0] && dateObj.getMonth() === parts[1] && dateObj.getFullYear() === parts[2]; // Check if date is valid
 }
 
-export const isValideTime = (time: string) => {
+export const isValidTime = (time: string) => {
     const parts = time.split(':').map(Number);
 
     if (parts.length !== 2) {

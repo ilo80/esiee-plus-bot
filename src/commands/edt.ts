@@ -1,6 +1,6 @@
 import {  CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
-import { convertDateFormat, isValideDate } from '../utils/date';
+import { convertDateFormat, isValidDate } from '../utils/date';
 
 const add1Hour = (hour: string) => {
     const [h, m] = hour.split(":").map(Number);
@@ -28,7 +28,7 @@ export const edt = {
         const endHour = interaction.options.get("fin")?.value as string || add1Hour(startHour);
         const epis = interaction.options.get("epis")?.value as number ?? -1;
 
-        if (!isValideDate(date)) {
+        if (!isValidDate(date)) {
             const embed = new EmbedBuilder()
                 .setColor("#F04747")
                 .setTitle("Erreur")
@@ -39,6 +39,8 @@ export const edt = {
 
             return;
         }
+
+        
 
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
