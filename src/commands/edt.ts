@@ -1,6 +1,6 @@
 import {  CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
-import { convertDateFormat, isValidDate } from '../utils/date';
+import { convertDateFormat, isValidDate, isValidTime } from '../utils/date';
 
 const add1Hour = (hour: string) => {
     const [h, m] = hour.split(":").map(Number);
@@ -40,7 +40,17 @@ export const edt = {
             return;
         }
 
-        
+        if (!isValidTime(startHour) || !isValidTime(endHour)) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que l'heure de début ou de fin renseignée ne soit pas valide !\nVeuillez renseigner une heure au format `hh:mm`.")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
 
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
