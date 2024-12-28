@@ -52,6 +52,18 @@ export const edt = {
             return;
         }
 
+        if (epis < -1 || epis > 6) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que l'épis renseigné ne soit pas valide !\nVeuillez renseigner un numéro d'épis entre 0 et 6.")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
+
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
 
