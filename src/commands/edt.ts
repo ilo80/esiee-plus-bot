@@ -64,6 +64,18 @@ export const edt = {
             return;
         }
 
+        if (startHour >= endHour) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que l'heure de début soit supérieure ou égale à l'heure de fin !")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
+
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
 
