@@ -34,5 +34,19 @@ export const isValideDate = (date: string) => {
 
     const dateObj = new Date(parts[2], parts[1], parts[0]);
 
-    return dateObj.getDate() === parts[0] && dateObj.getMonth() === parts[1] && dateObj.getFullYear() === parts[2];
+    return dateObj.getDate() === parts[0] && dateObj.getMonth() === parts[1] && dateObj.getFullYear() === parts[2]; // Check if date is valid
 }
+
+export const isValideTime = (time: string) => {
+    const parts = time.split(':').map(Number);
+
+    if (parts.length !== 2) {
+        return false;
+    }
+
+    if (isNaN(parts[0]) || isNaN(parts[1])) {
+        return false;
+    }
+
+    return parts[0] >= 0 && parts[0] <= 23 && parts[1] >= 0 && parts[1] <= 59;
+};
