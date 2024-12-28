@@ -11,6 +11,6 @@ export const ping = {
             .setColor("#F6CD55")
             .setTimestamp();
 
-        await interaction.reply({ embeds: [embed] });
+        await interaction.editReply({ embeds: [embed] });
     }
 }

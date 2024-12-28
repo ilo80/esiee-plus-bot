@@ -27,6 +27,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
     const command = commands.find( command => command.name === interaction.commandName ); // Find the command
 
     if (command) {
+        await interaction.deferReply(); // Defer the reply to avoid the 3 seconds timeout
+        
         command.execute( interaction );
     }
 });

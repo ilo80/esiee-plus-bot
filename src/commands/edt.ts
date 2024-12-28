@@ -28,8 +28,6 @@ export const edt = {
         const endHour = interaction.options.get("fin")?.value as string || add1Hour(startHour);
         const epis = interaction.options.get("epis")?.value as number ?? -1;
 
-        await interaction.deferReply(); // Defer the reply to avoid the 3 seconds timeout
-
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
 
