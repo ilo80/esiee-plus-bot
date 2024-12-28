@@ -1,6 +1,6 @@
 import {  CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
-import { convertDateFormat } from '../utils/date';
+import { convertDateFormat, isValidDate, isValidTime } from '../utils/date';
 
 const add1Hour = (hour: string) => {
     const [h, m] = hour.split(":").map(Number);
@@ -28,7 +28,53 @@ export const edt = {
         const endHour = interaction.options.get("fin")?.value as string || add1Hour(startHour);
         const epis = interaction.options.get("epis")?.value as number ?? -1;
 
-        await interaction.deferReply(); // Defer the reply to avoid the 3 seconds timeout
+        if (!isValidDate(date)) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
+
+        if (!isValidTime(startHour) || !isValidTime(endHour)) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que l'heure de début ou de fin renseignée ne soit pas valide !\nVeuillez renseigner une heure au format `hh:mm`.")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
+
+        if (epis < -1 || epis > 6) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que l'épis renseigné ne soit pas valide !\nVeuillez renseigner un numéro d'épis entre 0 et 6.")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
+
+        if (startHour >= endHour) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que l'heure de début soit supérieure ou égale à l'heure de fin !")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
 
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));

@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits, REST, Routes } from "discord.js";
+import { Client, EmbedBuilder, Events, GatewayIntentBits, REST, Routes } from "discord.js";
 import dotenv from "dotenv";
 
 // Import commands
@@ -27,6 +27,21 @@ client.on(Events.InteractionCreate, async (interaction) => {
     const command = commands.find( command => command.name === interaction.commandName ); // Find the command
 
     if (command) {
-        command.execute( interaction );
+        await interaction.deferReply(); // Defer the reply to avoid the 3 seconds timeout
+
+        try {
+            await command.execute( interaction ); // Execute the command
+            
+        } catch (error) {
+            console.error(error);
+
+            const embed = new EmbedBuilder()
+                .setTitle("Erreur !")
+                .setDescription("Uh Oh ! Il s'emblerait qu'une erreur soit survenue lors de l'exécution de la commande !")
+                .setColor("#F04747")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+        }
     }
 });
