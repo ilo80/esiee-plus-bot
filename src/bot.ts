@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 // Import commands
 import { ping } from "./commands/ping";
+import { edt } from "./commands/edt";
 
 dotenv.config(); // Load .env file
 
@@ -10,12 +11,12 @@ export const client = new Client( { intents: GatewayIntentBits.Guilds } ); // Cr
 
 const rest = new REST().setToken( process.env.DISCORD_TOKEN as string ); // Create a new REST client and set the token
 
-const commands = [ ping ]; // List of commands
+const commands = [ ping, edt ]; // List of commands
 
 client.once(Events.ClientReady, async () => {
     console.log("Bot is ready!");
 
-    await rest.put( Routes.applicationGuildCommands( client.user?.id as string, process.env.GUILD_ID as string ), { body: commands } ); // Register commands
+    await rest.put( Routes.applicationGuildCommands( client.user?.id as string, process.env.DISCORD_GUILD_ID as string ), { body: commands } ); // Register commands
 
     console.log("Commands registered!");
 });
