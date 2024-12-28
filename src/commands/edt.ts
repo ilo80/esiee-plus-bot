@@ -1,6 +1,6 @@
 import {  CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
-import { convertDateFormat } from '../utils/date';
+import { convertDateFormat, isValideDate } from '../utils/date';
 
 const add1Hour = (hour: string) => {
     const [h, m] = hour.split(":").map(Number);
@@ -27,6 +27,18 @@ export const edt = {
         const startHour = interaction.options.get("debut")?.value as string || new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
         const endHour = interaction.options.get("fin")?.value as string || add1Hour(startHour);
         const epis = interaction.options.get("epis")?.value as number ?? -1;
+
+        if (!isValideDate(date)) {
+            const embed = new EmbedBuilder()
+                .setColor("#F04747")
+                .setTitle("Erreur")
+                .setDescription("Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.")
+                .setTimestamp();
+            
+            await interaction.editReply({ embeds: [embed] });
+
+            return;
+        }
 
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
