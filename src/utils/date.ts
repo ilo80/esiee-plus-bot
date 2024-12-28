@@ -1,7 +1,7 @@
 export const convertDateFormat = (date: string) => {
     const [day, month, year] = date.split('/');
 
-    return `${year}-${month}-${day}`;
+    return `${month}/${day}/${year}`;
 };
 
 export const doTimeRangeOverlap = (start1: string, end1: string, start2: string, end2: string) => {
