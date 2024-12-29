@@ -49,24 +49,24 @@ export const recherche_salles = {
         const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
 
-        if (classrooms.length === 0) {
+        const filteredClassrooms = epis !== -1 ? sortedClassrooms.filter(classroom => parseInt(classroom[0]) === epis) : sortedClassrooms; // Filter classrooms by epis
+
+        if (filteredClassrooms.length === 0) {
             await sendErrorEmbed(interaction, NO_CLASSROOMS_AVAILABLE);
             return;
         }
 
-        const filteredClassrooms = epis !== -1 ? sortedClassrooms.filter(classroom => parseInt(classroom[0]) === epis) : sortedClassrooms; // Filter classrooms by epis
-
-        const groupedClassrooms = filteredClassrooms.reduce<Record<number, string[]>>(
+        const groupedClassrooms = filteredClassrooms.reduce<Record<number, string[]>>( // Group classrooms by epis
             (acc, classroom) => {
-                const e = parseInt(classroom[0]);
+                const e = parseInt(classroom[0]); // Get the epis number
 
-                if (!acc[e]) acc[e] = [];
+                if (!acc[e]) acc[e] = []; // Initialize the array if it doesn't exist
 
-                acc[e].push(classroom);
+                acc[e].push(classroom); // Push the classroom to the array
                 return acc;
             },
             {}
-        )
+        );
 
         const embedField = Object.keys(groupedClassrooms).map(epis => {
             return {
