@@ -21,9 +21,9 @@ export const edt = {
     ],
 
     async execute(interaction: CommandInteraction) {
-        const date = interaction.options.get("date")?.value as string || new Date().toLocaleDateString("fr-FR");
-        const startHour = interaction.options.get("debut")?.value as string || new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-        const endHour = interaction.options.get("fin")?.value as string || add1Hour(startHour);
+        const date = interaction.options.get("date")?.value as string ?? new Date().toLocaleDateString("fr-FR");
+        const startHour = interaction.options.get("debut")?.value as string ?? new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+        const endHour = interaction.options.get("fin")?.value as string ?? add1Hour(startHour);
         const epis = interaction.options.get("epis")?.value as number ?? -1;
 
         if (!isValidDate(date)) {
