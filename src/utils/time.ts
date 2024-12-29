@@ -26,3 +26,13 @@ export const isValidTime = (time: string) => {
 
     return parts[0] >= 0 && parts[0] <= 23 && parts[1] >= 0 && parts[1] <= 59;
 };
+
+export const add1Hour = (hour: string) => {
+    const [h, m] = hour.split(":").map(Number);
+    const newHourDate = new Date();
+
+    newHourDate.setHours(h);
+    newHourDate.setMinutes(m + 60);
+
+    return newHourDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+};
