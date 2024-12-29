@@ -10,8 +10,8 @@ const ERROR_INVALID_EPIS = "Il semblerait que l'épis renseigné ne soit pas val
 const ERROR_START_AFTER_END = "Il semblerait que l'heure de début soit supérieure ou égale à l'heure de fin !\nVeuillez renseigner une heure de début inférieure à l'heure de fin.";
 const NO_CLASSROOMS_AVAILABLE = "Aucune salle n'est disponible à cette période !\nVeuillez réessayer avec une autre période.";
 
-export const edt = {
-    name: "edt",
+export const recherche_salles = {
+    name: "recherche_salles",
     description: "Trouves des salles libres sur une période donnée ! 🚪",
     options: [
         { name: "date", description: "La date à laquelle tu veux trouver des salles libres", type: ApplicationCommandOptionType.String, required: false },
