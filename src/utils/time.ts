@@ -12,3 +12,17 @@ export const timeToMinutes = (time: string) => {
 
     return hours * 60 + minutes;
 }
+
+export const isValidTime = (time: string) => {
+    const parts = time.split(':').map(Number);
+
+    if (parts.length !== 2) {
+        return false;
+    }
+
+    if (isNaN(parts[0]) || isNaN(parts[1])) {
+        return false;
+    }
+
+    return parts[0] >= 0 && parts[0] <= 23 && parts[1] >= 0 && parts[1] <= 59;
+};
