@@ -1,10 +1,4 @@
 export const doTimeRangeOverlap = (start1: string, end1: string, start2: string, end2: string) => {
-    const timeToMinutes = (time: string) => {
-        const [hours, minutes] = time.split(':').map(Number);
-
-        return hours * 60 + minutes;
-    }
-
     const start1Minutes = timeToMinutes(start1);
     const end1Minutes = timeToMinutes(end1);
     const start2Minutes = timeToMinutes(start2);
@@ -12,3 +6,9 @@ export const doTimeRangeOverlap = (start1: string, end1: string, start2: string,
 
     return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
 };
+
+export const timeToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+
+    return hours * 60 + minutes;
+}
