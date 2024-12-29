@@ -1,7 +1,14 @@
-import {  CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
 import { convertDateFormat, isValidDate } from '../utils/date';
 import { isValidTime, add1Hour } from '../utils/time';
+import { sendErrorEmbed } from '../utils/embed';
+
+const ERROR_INVALID_DATE = "Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.";
+const ERROR_INVALID_TIME = "Il semblerait que l'heure de début ou de fin renseignée ne soit pas valide !\nVeuillez renseigner une heure au format `hh:mm`.";
+const ERROR_INVALID_EPIS = "Il semblerait que l'épis renseigné ne soit pas valide !\nVeuillez renseigner un numéro d'épis entre 0 et 6.";
+const ERROR_START_AFTER_END = "Il semblerait que l'heure de début soit supérieure ou égale à l'heure de fin !\nVeuillez renseigner une heure de début inférieure à l'heure de fin.";
+const NO_CLASSROOMS_AVAILABLE = "Aucune salle n'est disponible à cette période !\nVeuillez réessayer avec une autre période.";
 
 export const edt = {
     name: "edt",
@@ -20,50 +27,22 @@ export const edt = {
         const epis = interaction.options.get("epis")?.value as number ?? -1;
 
         if (!isValidDate(date)) {
-            const embed = new EmbedBuilder()
-                .setColor("#F04747")
-                .setTitle("Erreur")
-                .setDescription("Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.")
-                .setTimestamp();
-            
-            await interaction.editReply({ embeds: [embed] });
-
+            await sendErrorEmbed(interaction, ERROR_INVALID_DATE);
             return;
         }
 
         if (!isValidTime(startHour) || !isValidTime(endHour)) {
-            const embed = new EmbedBuilder()
-                .setColor("#F04747")
-                .setTitle("Erreur")
-                .setDescription("Il semblerait que l'heure de début ou de fin renseignée ne soit pas valide !\nVeuillez renseigner une heure au format `hh:mm`.")
-                .setTimestamp();
-            
-            await interaction.editReply({ embeds: [embed] });
-
+            await sendErrorEmbed(interaction, ERROR_INVALID_TIME);
             return;
         }
 
         if (epis < -1 || epis > 6) {
-            const embed = new EmbedBuilder()
-                .setColor("#F04747")
-                .setTitle("Erreur")
-                .setDescription("Il semblerait que l'épis renseigné ne soit pas valide !\nVeuillez renseigner un numéro d'épis entre 0 et 6.")
-                .setTimestamp();
-            
-            await interaction.editReply({ embeds: [embed] });
-
+            await sendErrorEmbed(interaction, ERROR_INVALID_EPIS);
             return;
         }
 
         if (startHour >= endHour) {
-            const embed = new EmbedBuilder()
-                .setColor("#F04747")
-                .setTitle("Erreur")
-                .setDescription("Il semblerait que l'heure de début soit supérieure ou égale à l'heure de fin !")
-                .setTimestamp();
-            
-            await interaction.editReply({ embeds: [embed] });
-
+            await sendErrorEmbed(interaction, ERROR_START_AFTER_END);
             return;
         }
 
@@ -71,7 +50,7 @@ export const edt = {
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
 
         if (classrooms.length === 0) {
-            await interaction.editReply("Aucune salle n'est disponible à cette période !");
+            await sendErrorEmbed(interaction, NO_CLASSROOMS_AVAILABLE);
             return;
         }
 
