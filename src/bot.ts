@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 // Import commands
 import { ping } from "./commands/ping";
 import { edt } from "./commands/edt";
+import { sendErrorEmbed } from "./utils/embed";
+
+const ERROR_COMMAND = "Uh ! Oh ! Il s'emblerait qu'une erreur soit survenue lors de l'exécution de la commande !";
 
 dotenv.config(); // Load .env file
 
@@ -31,17 +34,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
         try {
             await command.execute( interaction ); // Execute the command
-            
         } catch (error) {
-            console.error(error);
-
-            const embed = new EmbedBuilder()
-                .setTitle("Erreur !")
-                .setDescription("Uh Oh ! Il s'emblerait qu'une erreur soit survenue lors de l'exécution de la commande !")
-                .setColor("#F04747")
-                .setTimestamp();
-            
-            await interaction.editReply({ embeds: [embed] });
+            console.error(error); // Log the error
+            await sendErrorEmbed(interaction, ERROR_COMMAND); // Send an error embed
         }
     }
 });
