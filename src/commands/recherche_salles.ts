@@ -56,17 +56,17 @@ export const recherche_salles = {
 
         const filteredClassrooms = epis !== -1 ? sortedClassrooms.filter(classroom => parseInt(classroom[0]) === epis) : sortedClassrooms; // Filter classrooms by epis
 
-        const groupedClassrooms = {} as { [key: number]: string[] };
+        const groupedClassrooms = filteredClassrooms.reduce<Record<number, string[]>>(
+            (acc, classroom) => {
+                const e = parseInt(classroom[0]);
 
-        filteredClassrooms.forEach(classroom => {
-            const e = parseInt(classroom[0]);
+                if (!acc[e]) acc[e] = [];
 
-            if (!groupedClassrooms[e]) {
-                groupedClassrooms[e] = [];
-            }
-
-            groupedClassrooms[e].push(classroom);
-        });
+                acc[e].push(classroom);
+                return acc;
+            },
+            {}
+        )
 
         const embedField = Object.keys(groupedClassrooms).map(epis => {
             return {
