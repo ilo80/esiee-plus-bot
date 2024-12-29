@@ -1,16 +1,7 @@
 import {  CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
-import { convertDateFormat, isValidDate, isValidTime } from '../utils/date';
-
-const add1Hour = (hour: string) => {
-    const [h, m] = hour.split(":").map(Number);
-    const newHourDate = new Date();
-
-    newHourDate.setHours(h);
-    newHourDate.setMinutes(m + 60);
-
-    return newHourDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-};
+import { convertDateFormat, isValidDate } from '../utils/date';
+import { isValidTime, add1Hour } from '../utils/time';
 
 export const edt = {
     name: "edt",

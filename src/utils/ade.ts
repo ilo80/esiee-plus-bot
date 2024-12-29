@@ -1,6 +1,6 @@
 import { ADEPlanningAPI } from "ade-planning-api";
 import { sleep } from "./sleep";
-import { doTimeRangeOverlap } from "./date";
+import { doTimeRangeOverlap } from "./time";
 
 export const getAvailableClassroom = async (date: string, startHour: string, endHour: string) => {
     const api = new ADEPlanningAPI(process.env.ADE_LINK as string);
