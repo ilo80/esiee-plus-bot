@@ -1,3 +1,8 @@
+export type Time = {
+    hours: number;
+    minutes: number;
+};
+
 export const doTimeRangeOverlap = (start1: string, end1: string, start2: string, end2: string) => {
     const start1Minutes = timeToMinutes(start1);
     const end1Minutes = timeToMinutes(end1);
