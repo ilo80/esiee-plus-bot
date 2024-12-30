@@ -27,12 +27,17 @@ export const convertTimeFormat = (time: string) => {
     return { hours, minutes } as Time;
 };
 
+export const convertTimeToString = (time: Time) => {
+    return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
+};
+
+
 export const doTimeRangeOverlap = (start1: Time, end1: Time, start2: Time, end2: Time) => {
     const start1Minutes = timeToMinutes(start1);
     const end1Minutes = timeToMinutes(end1);
     const start2Minutes = timeToMinutes(start2);
     const end2Minutes = timeToMinutes(end2);
-
+    
     return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
 };
 
