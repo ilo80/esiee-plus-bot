@@ -1,7 +1,7 @@
 import { CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
 import { convertDateFormat, isValidDate } from '../utils/date';
-import { convertTimeFormat, addTime, isValidTimeString } from '../utils/time';
+import { convertTimeFormat, addTime, isValidTimeString, convertTimeToString } from '../utils/time';
 import { sendErrorEmbed } from '../utils/embed';
 
 const ERROR_INVALID_DATE = "Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.";
@@ -90,7 +90,7 @@ export const recherche_salles = {
 
         const embed = new EmbedBuilder()
             .setColor("#0099ff")
-            .setTitle(`Salles libres le ${date} de ${startHour} à ${endHour}`)
+            .setTitle(`Salles libres le ${date} de ${convertTimeToString(startHour)} à ${convertTimeToString(endHour)}`)
             .setFields(embedField)
             .setTimestamp();
         
