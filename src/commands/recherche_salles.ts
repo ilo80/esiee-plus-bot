@@ -1,7 +1,7 @@
 import { CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom } from '../utils/ade';
 import { convertDateFormat, isValidDate } from '../utils/date';
-import { convertTimeFormat, addTime, Time } from '../utils/time';
+import { convertTimeFormat, addTime, isValidTimeString } from '../utils/time';
 import { sendErrorEmbed } from '../utils/embed';
 
 const ERROR_INVALID_DATE = "Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.";
@@ -23,21 +23,28 @@ export const recherche_salles = {
     async execute(interaction: CommandInteraction) {
         const now = new Date(); // Get the current date
 
-        const epis = interaction.options.get("epis")?.value as number ?? -1;
-        const date = interaction.options.get("date")?.value as string ?? now.toLocaleDateString("fr-FR");
-        const startHourString = interaction.options.get("debut")?.value as string ?? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-        const startHour = convertTimeFormat(startHourString);
+        const epis = interaction.options.get("epis")?.value as number ?? -1; // Get the epis number if provided, -1 otherwise
+        const date = interaction.options.get("date")?.value as string ?? now.toLocaleDateString("fr-FR"); // Get the date if provided, the current date otherwise
+        const startHourString = interaction.options.get("debut")?.value as string ?? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }); // Get the start hour if provided, the current hour otherwise
 
-        const endHourString = interaction.options.get("fin")?.value as string ?? null;
+        if (!isValidTimeString(startHourString)) {
+            await sendErrorEmbed(interaction, ERROR_INVALID_TIME);
+            return;
+        }
+
+        const startHour = convertTimeFormat(startHourString); // Convert the start hour to a Time object
+
+        const endHourString = interaction.options.get("fin")?.value as string ?? null; // Get the end hour if provided, null otherwise
+
+        if (endHourString != null && !isValidTimeString(endHourString)) {
+            await sendErrorEmbed(interaction, ERROR_INVALID_TIME);
+            return;
+        }
+
         const endHour = endHourString ? convertTimeFormat(endHourString) : addTime(startHour, 60); // Add 1 hour to the start hour if the end hour is not provided
 
         if (!isValidDate(date)) {
             await sendErrorEmbed(interaction, ERROR_INVALID_DATE);
-            return;
-        }
-
-        if (!isValidTime(startHour) || !isValidTime(endHour)) {
-            await sendErrorEmbed(interaction, ERROR_INVALID_TIME);
             return;
         }
 
@@ -46,7 +53,7 @@ export const recherche_salles = {
             return;
         }
 
-        if (startHour >= endHour) {
+        if (startHourString >= endHourString) {
             await sendErrorEmbed(interaction, ERROR_START_AFTER_END);
             return;
         }
