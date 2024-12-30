@@ -50,3 +50,12 @@ export const add1Hour = (hour: string) => {
     return newHourDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 };
 
+export const addTime = (time: Time, minutes: number) => {
+    const newTime = new Date();
+
+    newTime.setHours(time.hours);
+    newTime.setMinutes(time.minutes + minutes);
+
+    return { hours: newTime.getHours(), minutes: newTime.getMinutes() } as Time;
+};
+
