@@ -1,8 +1,8 @@
 import { ADEPlanningAPI } from "ade-planning-api";
 import { sleep } from "./sleep";
-import { doTimeRangeOverlap } from "./time";
+import { convertTimeFormat, doTimeRangeOverlap, Time } from "./time";
 
-export const getAvailableClassroom = async (date: string, startHour: string, endHour: string) => {
+export const getAvailableClassroom = async (date: string, startHour: Time, endHour: Time) => {
     const api = new ADEPlanningAPI(process.env.ADE_LINK as string);
 
     await api.initializeSession({ username: process.env.ADE_USERNAME as string, password: process.env.ADE_PASSWORD as string });
@@ -25,12 +25,13 @@ export const getAvailableClassroom = async (date: string, startHour: string, end
     const availableClassroom = [] as string[];
 
     for (const classroomResource of classroom) {
-        const events = await api.getEvents({ resource: classroomResource.id, date: date, detail: 3 }); // Get all events of the classroom in the specified date
+        const events = await api.getEvents({ resources: classroomResource.id, date: date, detail: 3 }); // Get all events of the classroom in the specified date
 
         let isAvailable = true;
 
         for (const event of events) {
-            if (doTimeRangeOverlap(startHour, endHour, event.startHour, event.endHour)) { // Check if the classroom is available
+            if (doTimeRangeOverlap(startHour, endHour, convertTimeFormat(event.startHour), convertTimeFormat(event.endHour))) { // Check if the classroom is available
+                
                 isAvailable = false;
                 break;
             }
