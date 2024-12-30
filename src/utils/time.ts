@@ -27,7 +27,7 @@ export const convertTimeFormat = (time: string) => {
     return { hours, minutes } as Time;
 };
 
-export const doTimeRangeOverlap = (start1: string, end1: string, start2: string, end2: string) => {
+export const doTimeRangeOverlap = (start1: Time, end1: Time, start2: Time, end2: Time) => {
     const start1Minutes = timeToMinutes(start1);
     const end1Minutes = timeToMinutes(end1);
     const start2Minutes = timeToMinutes(start2);
