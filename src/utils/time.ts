@@ -18,7 +18,7 @@ export const timeToMinutes = (time: string) => {
     return hours * 60 + minutes;
 }
 
-export const isValidTime = (time: string) => {
+export const isValidTimeString = (time: string) => {
     const parts = time.split(':').map(Number);
 
     if (parts.length !== 2) {
