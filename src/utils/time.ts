@@ -41,3 +41,13 @@ export const add1Hour = (hour: string) => {
 
     return newHourDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 };
+
+export const convertTimeFormat = (time: string) => {
+    if (!isValidTimeString(time)) {
+        throw new Error('Invalid time format');
+    }
+
+    const [hours, minutes] = time.split(':').map(Number);
+
+    return { hours, minutes } as Time;
+}
