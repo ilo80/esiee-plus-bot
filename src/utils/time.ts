@@ -38,16 +38,6 @@ export const doTimeRangeOverlap = (start1: Time, end1: Time, start2: Time, end2:
 
 export const timeToMinutes = (time: Time) => {
     return time.hours * 60 + time.minutes;
-}
-
-export const add1Hour = (hour: string) => {
-    const [h, m] = hour.split(":").map(Number);
-    const newHourDate = new Date();
-
-    newHourDate.setHours(h);
-    newHourDate.setMinutes(m + 60);
-
-    return newHourDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 };
 
 export const addTime = (time: Time, minutes: number) => {
