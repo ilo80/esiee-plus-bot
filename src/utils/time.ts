@@ -1,19 +1,9 @@
-export const doTimeRangeOverlap = (start1: string, end1: string, start2: string, end2: string) => {
-    const start1Minutes = timeToMinutes(start1);
-    const end1Minutes = timeToMinutes(end1);
-    const start2Minutes = timeToMinutes(start2);
-    const end2Minutes = timeToMinutes(end2);
-
-    return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
+export type Time = {
+    hours: number;
+    minutes: number;
 };
 
-export const timeToMinutes = (time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-
-    return hours * 60 + minutes;
-}
-
-export const isValidTime = (time: string) => {
+export const isValidTimeString = (time: string) => {
     const parts = time.split(':').map(Number);
 
     if (parts.length !== 2) {
@@ -27,12 +17,40 @@ export const isValidTime = (time: string) => {
     return parts[0] >= 0 && parts[0] <= 23 && parts[1] >= 0 && parts[1] <= 59;
 };
 
-export const add1Hour = (hour: string) => {
-    const [h, m] = hour.split(":").map(Number);
-    const newHourDate = new Date();
+export const convertStringToTime = (time: string) => {
+    if (!isValidTimeString(time)) {
+        throw new Error('Invalid time format');
+    }
 
-    newHourDate.setHours(h);
-    newHourDate.setMinutes(m + 60);
+    const [hours, minutes] = time.split(':').map(Number);
 
-    return newHourDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    return { hours, minutes } as Time;
 };
+
+export const convertTimeToString = (time: Time) => {
+    return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
+};
+
+
+export const doTimeRangeOverlap = (start1: Time, end1: Time, start2: Time, end2: Time) => {
+    const start1Minutes = timeToMinutes(start1);
+    const end1Minutes = timeToMinutes(end1);
+    const start2Minutes = timeToMinutes(start2);
+    const end2Minutes = timeToMinutes(end2);
+
+    return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
+};
+
+export const timeToMinutes = (time: Time) => {
+    return time.hours * 60 + time.minutes;
+};
+
+export const addTime = (time: Time, minutes: number) => {
+    const newTime = new Date();
+
+    newTime.setHours(time.hours);
+    newTime.setMinutes(time.minutes + minutes);
+
+    return { hours: newTime.getHours(), minutes: newTime.getMinutes() } as Time;
+};
+
