@@ -1,6 +1,6 @@
 import { ADEPlanningAPI, Resources } from "ade-planning-api";
 import { sleep } from "./sleep";
-import { convertTimeFormat, doTimeRangeOverlap, Time } from "./time";
+import { convertStringToTime, doTimeRangeOverlap, Time } from "./time";
 import { Resource } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
 
 export const initializeAPI = async () => {
@@ -30,7 +30,7 @@ export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomR
     const events = await api.getEvents({ resources: classroomResource.id, date: date, detail: 3 }); // Get all events of the classroom in the specified date
 
     for (const event of events) {
-        if (doTimeRangeOverlap(startHour, endHour, convertTimeFormat(event.startHour), convertTimeFormat(event.endHour))) { // Check if the classroom is available
+        if (doTimeRangeOverlap(startHour, endHour, convertStringToTime(event.startHour), convertStringToTime(event.endHour))) { // Check if the classroom is available
             return false;
         }
     }

@@ -1,7 +1,7 @@
 import { CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom, initializeAPI } from '../utils/ade';
 import { convertDateFormat, isValidDate } from '../utils/date';
-import { convertTimeFormat, addTime, isValidTimeString, convertTimeToString } from '../utils/time';
+import { convertStringToTime, addTime, isValidTimeString, convertTimeToString } from '../utils/time';
 import { sendErrorEmbed } from '../utils/embed';
 
 const ERROR_INVALID_DATE = "Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.";
@@ -32,7 +32,7 @@ export const recherche_salles = {
             return;
         }
 
-        const startHour = convertTimeFormat(startHourString); // Convert the start hour to a Time object
+        const startHour = convertStringToTime(startHourString); // Convert the start hour to a Time object
 
         const endHourString = interaction.options.get("fin")?.value as string ?? null; // Get the end hour if provided, null otherwise
 
@@ -41,7 +41,7 @@ export const recherche_salles = {
             return;
         }
 
-        const endHour = endHourString ? convertTimeFormat(endHourString) : addTime(startHour, 60); // Add 1 hour to the start hour if the end hour is not provided
+        const endHour = endHourString ? convertStringToTime(endHourString) : addTime(startHour, 60); // Add 1 hour to the start hour if the end hour is not provided
 
         if (!isValidDate(date)) {
             await sendErrorEmbed(interaction, ERROR_INVALID_DATE);

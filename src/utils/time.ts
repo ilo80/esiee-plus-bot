@@ -17,7 +17,7 @@ export const isValidTimeString = (time: string) => {
     return parts[0] >= 0 && parts[0] <= 23 && parts[1] >= 0 && parts[1] <= 59;
 };
 
-export const convertTimeFormat = (time: string) => {
+export const convertStringToTime = (time: string) => {
     if (!isValidTimeString(time)) {
         throw new Error('Invalid time format');
     }
@@ -37,7 +37,7 @@ export const doTimeRangeOverlap = (start1: Time, end1: Time, start2: Time, end2:
     const end1Minutes = timeToMinutes(end1);
     const start2Minutes = timeToMinutes(start2);
     const end2Minutes = timeToMinutes(end2);
-    
+
     return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
 };
 
