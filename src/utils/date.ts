@@ -1,5 +1,27 @@
-export const convertDateFormat = (date: string) => {
-    const [day, month, year] = date.split('/');
+export const convertDateStringDDMMYYYYToDate = (date: string) => {
+    const [day, month, year] = date.split('/').map(Number);
+
+    return new Date(year, month - 1, day);
+};
+
+export const convertDateStringMMDDYYYYToDate = (date: string) => {
+    const [month, day, year] = date.split('/').map(Number);
+
+    return new Date(year, month - 1, day);
+};
+
+export const convertDateToDateStringDDMMYYYY = (date: Date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+};
+
+export const convertDateToDateStringMMDDYYYY = (date: Date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
 
     return `${month}/${day}/${year}`;
 };
