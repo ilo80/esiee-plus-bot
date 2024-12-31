@@ -1,5 +1,5 @@
 import { CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import { getAvailableClassroom } from '../utils/ade';
+import { getAvailableClassroom, initializeAPI } from '../utils/ade';
 import { convertDateFormat, isValidDate } from '../utils/date';
 import { convertTimeFormat, addTime, isValidTimeString, convertTimeToString } from '../utils/time';
 import { sendErrorEmbed } from '../utils/embed';
@@ -58,7 +58,9 @@ export const recherche_salles = {
             return;
         }
 
-        const classrooms = await getAvailableClassroom(convertDateFormat(date), startHour, endHour);
+        const adeAPI = await initializeAPI(); // Initialize the ADE API
+
+        const classrooms = await getAvailableClassroom(adeAPI, convertDateFormat(date), startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
 
         const filteredClassrooms = epis !== -1 ? sortedClassrooms.filter(classroom => parseInt(classroom[0]) === epis) : sortedClassrooms; // Filter classrooms by epis
@@ -79,6 +81,8 @@ export const recherche_salles = {
             },
             {}
         );
+
+        await adeAPI.terminateSession(); // Terminate the session
 
         const embedField = Object.keys(groupedClassrooms).map(epis => {
             return {

@@ -3,6 +3,17 @@ import { sleep } from "./sleep";
 import { convertTimeFormat, doTimeRangeOverlap, Time } from "./time";
 import { Resource } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
 
+export const initializeAPI = async () => {
+    const api = new ADEPlanningAPI(process.env.ADE_LINK as string);
+
+    await api.initializeSession({ username: process.env.ADE_USERNAME as string, password: process.env.ADE_PASSWORD as string });
+
+    const projets = await api.getProjects(); // Get all projects
+    await api.setProject(projets[0]); // Set to the first project (current year)
+
+    return api;
+};
+
 export const filterClassrooms = (resources: Resources) => {
     return resources.filter((resource) =>
         resource.category === "classroom" && // Filter only classrooms
@@ -27,14 +38,7 @@ export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomR
     return true;
 };
 
-export const getAvailableClassroom = async (date: string, startHour: Time, endHour: Time) => {
-    const api = new ADEPlanningAPI(process.env.ADE_LINK as string);
-
-    await api.initializeSession({ username: process.env.ADE_USERNAME as string, password: process.env.ADE_PASSWORD as string });
-
-    const projets = await api.getProjects(); // Get all projects
-    await api.setProject(projets[0]); // Set to the first project (current year)
-
+export const getAvailableClassroom = async (api: ADEPlanningAPI, date: string, startHour: Time, endHour: Time) => {
     const resources = await api.getResources({ detail: 3 }); // Get all resources
 
     const classroom = filterClassrooms(resources); // Filter classrooms
@@ -50,8 +54,6 @@ export const getAvailableClassroom = async (date: string, startHour: Time, endHo
 
         await sleep(100); // Sleep 100ms to avoid being banned
     }
-
-    await api.terminateSession(); // Terminate the session
 
     return availableClassroom;
 };
