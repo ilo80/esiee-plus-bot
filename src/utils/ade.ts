@@ -2,6 +2,7 @@ import { ADEPlanningAPI, Resources } from "ade-planning-api";
 import { sleep } from "./sleep";
 import { convertStringToTime, doTimeRangeOverlap, Time } from "./time";
 import { Resource } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
+import { convertDateToDateStringMMDDYYYY } from "./date";
 
 export const initializeAPI = async () => {
     const api = new ADEPlanningAPI(process.env.ADE_LINK as string);
@@ -26,8 +27,8 @@ export const filterClassrooms = (resources: Resources) => {
     );
 };
 
-export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomResource: Resource, date: string, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroomResource.id, date: date, detail: 3 }); // Get all events of the classroom in the specified date
+export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomResource: Resource, date: Date, startHour: Time, endHour: Time) => {
+    const events = await api.getEvents({ resources: classroomResource.id, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
 
     for (const event of events) {
         if (doTimeRangeOverlap(startHour, endHour, convertStringToTime(event.startHour), convertStringToTime(event.endHour))) { // Check if the classroom is available
@@ -38,7 +39,7 @@ export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomR
     return true;
 };
 
-export const getAvailableClassroom = async (api: ADEPlanningAPI, date: string, startHour: Time, endHour: Time) => {
+export const getAvailableClassroom = async (api: ADEPlanningAPI, date: Date, startHour: Time, endHour: Time) => {
     const resources = await api.getResources({ detail: 3 }); // Get all resources
 
     const classroom = filterClassrooms(resources); // Filter classrooms
