@@ -4,7 +4,7 @@ export const convertDateFormat = (date: string) => {
     return `${month}/${day}/${year}`;
 };
 
-export const isValidDate = (date: string) => {
+export const isValidStringDate = (date: string) => {
     const parts = date.split('/').map(Number);
 
     if (parts.length !== 3) {
