@@ -1,8 +1,8 @@
 import { CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import { getAvailableClassroom, initializeAPI } from '../utils/ade';
-import { convertDateFormat, isValidDate } from '../utils/date';
 import { convertStringToTime, addTime, isValidTimeString, convertTimeToString } from '../utils/time';
 import { sendErrorEmbed } from '../utils/embed';
+import { convertDateStringDDMMYYYYToDate, convertDateToDateStringDDMMYYYY, isValidDateString } from '../utils/date';
 
 const ERROR_INVALID_DATE = "Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.";
 const ERROR_INVALID_TIME = "Il semblerait que l'heure de début ou de fin renseignée ne soit pas valide !\nVeuillez renseigner une heure au format `hh:mm`.";
@@ -24,7 +24,15 @@ export const recherche_salles = {
         const now = new Date(); // Get the current date
 
         const epis = interaction.options.get("epis")?.value as number ?? -1; // Get the epis number if provided, -1 otherwise
-        const date = interaction.options.get("date")?.value as string ?? now.toLocaleDateString("fr-FR"); // Get the date if provided, the current date otherwise
+        const dateString = interaction.options.get("date")?.value as string ?? now.toLocaleString("fr-FR"); // Get the date if provided, the current date otherwise
+
+        if (!isValidDateString(dateString)) {
+            await sendErrorEmbed(interaction, ERROR_INVALID_DATE);
+            return;
+        }
+
+        const date = convertDateStringDDMMYYYYToDate(dateString); // Convert the date to a Date object
+        
         const startHourString = interaction.options.get("debut")?.value as string ?? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }); // Get the start hour if provided, the current hour otherwise
 
         if (!isValidTimeString(startHourString)) {
@@ -43,11 +51,6 @@ export const recherche_salles = {
 
         const endHour = endHourString ? convertStringToTime(endHourString) : addTime(startHour, 60); // Add 1 hour to the start hour if the end hour is not provided
 
-        if (!isValidDate(date)) {
-            await sendErrorEmbed(interaction, ERROR_INVALID_DATE);
-            return;
-        }
-
         if (epis < -1 || epis > 6) {
             await sendErrorEmbed(interaction, ERROR_INVALID_EPIS);
             return;
@@ -60,7 +63,7 @@ export const recherche_salles = {
 
         const adeAPI = await initializeAPI(); // Initialize the ADE API
 
-        const classrooms = await getAvailableClassroom(adeAPI, convertDateFormat(date), startHour, endHour);
+        const classrooms = await getAvailableClassroom(adeAPI, date, startHour, endHour);
         const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
 
         const filteredClassrooms = epis !== -1 ? sortedClassrooms.filter(classroom => parseInt(classroom[0]) === epis) : sortedClassrooms; // Filter classrooms by epis
@@ -94,7 +97,7 @@ export const recherche_salles = {
 
         const embed = new EmbedBuilder()
             .setColor("#0099ff")
-            .setTitle(`Salles libres le ${date} de ${convertTimeToString(startHour)} à ${convertTimeToString(endHour)}`)
+            .setTitle(`Salles libres le ${convertDateToDateStringDDMMYYYY(date)} de ${convertTimeToString(startHour)} à ${convertTimeToString(endHour)}`)
             .setFields(embedField)
             .setTimestamp();
         

@@ -26,7 +26,7 @@ export const convertDateToDateStringMMDDYYYY = (date: Date) => {
     return `${month}/${day}/${year}`;
 };
 
-export const isValidStringDate = (date: string) => {
+export const isValidDateString = (date: string) => {
     const parts = date.split('/').map(Number);
 
     if (parts.length !== 3) {
