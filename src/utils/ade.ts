@@ -39,14 +39,10 @@ export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomR
     return true;
 };
 
-export const getAvailableClassroom = async (api: ADEPlanningAPI, date: Date, startHour: Time, endHour: Time) => {
-    const resources = await api.getResources({ detail: 3 }); // Get all resources
-
-    const classroom = filterClassrooms(resources); // Filter classrooms
-
+export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: Resources, date: Date, startHour: Time, endHour: Time) => {
     const availableClassroom = [] as string[];
 
-    for (const classroomResource of classroom) {
+    for (const classroomResource of classrooms) {
         const isAvailable = await checkClassroomAvailability(api, classroomResource, date, startHour, endHour); // Check if the classroom is available
 
         if (isAvailable) {
