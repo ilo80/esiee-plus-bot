@@ -93,6 +93,32 @@ export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: s
     return { hours: Math.floor(freeDuration / 60), minutes: freeDuration % 60 } as Time; // Return the free duration
 }
 
+export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroom: string, date: Date, startHour: Time, endHour: Time) => {
+    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Récupère tous les événements de la salle à la date spécifiée
+
+    let occupiedDuration = 0;
+    let currentStartHour = startHour;
+
+    while (compareTimes(currentStartHour, endHour) < 0) {
+        const currentEndHour = addTime(currentStartHour, 1); // Ajoute 1 minute à l'heure actuelle
+
+        if (compareTimes(currentEndHour, endHour) > 0) {
+            break;
+        };
+
+        const isOccupied = !(await checkClassroomAvailability(events, currentStartHour, currentEndHour)); // Vérifie si la salle est occupée
+
+        if (isOccupied) {
+            occupiedDuration++;
+        }
+
+        currentStartHour = currentEndHour;
+    }
+
+    return { hours: Math.floor(occupiedDuration / 60), minutes: occupiedDuration % 60 } as Time; // Retourne la durée d'occupation
+}
+
+
 export const getClassroomInformations = async (classroom: Resource) => {
     const classroomInfo = classroom.info; // classroom.info = equipment
     const splittedInfo = classroomInfo.split(", ") // Split equipements
