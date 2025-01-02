@@ -1,7 +1,7 @@
 import { ADEPlanningAPI, Resources } from "ade-planning-api";
 import { sleep } from "./sleep";
 import { addTime, convertStringToTime, doTimeRangeOverlap, compareTimes, Time } from "./time";
-import { Events } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
+import { Events, Resource } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
 import { convertDateToDateStringMMDDYYYY } from "./date";
 
 export const initializeAPI = async () => {
@@ -92,3 +92,21 @@ export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: s
 
     return { hours: Math.floor(freeDuration / 60), minutes: freeDuration % 60 } as Time; // Return the free duration
 }
+
+export const getClassroomInformations = async (classroom: Resource) => {
+    const classroomInfo = classroom.info; // classroom.info = equipment
+    const splittedInfo = classroomInfo.split(", ") // Split equipements
+
+    const boardType = splittedInfo.find((info) => info.toLowerCase().includes("tableau")) ?? "Aucun"; // Get the board type
+    const formattedBoardType = boardType.charAt(0).toUpperCase() + boardType.slice(1); // Format the board type
+
+    const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")).toString().replace(/,/g, ", "); // Get other equipments
+
+    return {
+        id: classroom.id,
+        name: classroom.name,
+        board: formattedBoardType,
+        equipements: otherEquipments,
+        capacity: classroom.size,
+    };
+};
