@@ -18,14 +18,21 @@ export const initializeAPI = async () => {
 export const filterClassrooms = (resources: Resources) => {
     return resources.filter((resource) =>
         resource.category === "classroom" && // Filter only classrooms
-        /^[0-9]+$/.test(resource.name) && // Filter only classrooms with a number
-        !resource.path.toLowerCase().includes("labos") && // Filter out labs
-        !resource.path.toLowerCase().includes("examens") && // Filter out exams
-        !resource.name.startsWith("6") && // Filter out classrooms of the 6th epis
-        resource.name !== "0351" && // Filter out the 0351 classroom
-        resource.name !== "0244" // Filter out the 0244 classroom
+        /^[0-9]{4}(?:[+]|V(?:[+])?)?$/.test(resource.name) // Filter only classrooms with a valid name
     );
 };
+
+export const filterOutLabsExamsLocked = (classrooms: Resources) => {
+    return classrooms.filter((classroom) =>
+        /^[0-9]+$/.test(classroom.name) && // Filter only classrooms with a number
+        !classroom.path.toLowerCase().includes("labos") && // Filter out labs
+        !classroom.path.toLowerCase().includes("examens") && // Filter out exams
+        !classroom.name.startsWith("6") && // Filter out classrooms of the 6th epis
+        classroom.name !== "0351" && // Filter out the 0351 classroom
+        classroom.name !== "0244" // Filter out the 0244 classroom
+    );
+};
+
 
 export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomResource: Resource, date: Date, startHour: Time, endHour: Time) => {
     const events = await api.getEvents({ resources: classroomResource.id, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
@@ -53,4 +60,11 @@ export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: Res
     }
 
     return availableClassroom;
+};
+
+
+export const correctClassroomName = (classrooms: Resources, classroom: string) => {
+    const formattedClassroom = classroom.length === 3 ? `0${classroom}` : classroom; // Add a 0 at the beginning of the classroom name if it's only 3 characters long
+
+    return classrooms.find((classroomResource) => classroomResource.name.includes(formattedClassroom))?.name;
 };
