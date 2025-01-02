@@ -54,3 +54,9 @@ export const addTime = (time: Time, minutes: number) => {
     return { hours: newTime.getHours(), minutes: newTime.getMinutes() } as Time;
 };
 
+export const compareTimes = (time1: Time, time2: Time) => {
+    const minutes1 = timeToMinutes(time1);
+    const minutes2 = timeToMinutes(time2);
+
+    return minutes1 - minutes2;
+};

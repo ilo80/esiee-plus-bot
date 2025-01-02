@@ -1,5 +1,5 @@
 import { CommandInteraction, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import { getAvailableClassroom, initializeAPI } from '../utils/ade';
+import { getAvailableClassroom, initializeAPI, filterClassrooms, filterOutLabsExamsLocked } from '../utils/ade';
 import { convertStringToTime, addTime, isValidTimeString, convertTimeToString } from '../utils/time';
 import { sendErrorEmbed } from '../utils/embed';
 import { convertDateStringDDMMYYYYToDate, convertDateToDateStringDDMMYYYY, isValidDateString } from '../utils/date';
@@ -24,7 +24,7 @@ export const recherche_salles = {
         const now = new Date(); // Get the current date
 
         const epis = interaction.options.get("epis")?.value as number ?? -1; // Get the epis number if provided, -1 otherwise
-        const dateString = interaction.options.get("date")?.value as string ?? now.toLocaleString("fr-FR"); // Get the date if provided, the current date otherwise
+        const dateString = interaction.options.get("date")?.value as string ?? now.toLocaleDateString("fr-FR"); // Get the date if provided, the current date otherwise
 
         if (!isValidDateString(dateString)) {
             await sendErrorEmbed(interaction, ERROR_INVALID_DATE);
@@ -63,8 +63,12 @@ export const recherche_salles = {
 
         const adeAPI = await initializeAPI(); // Initialize the ADE API
 
-        const classrooms = await getAvailableClassroom(adeAPI, date, startHour, endHour);
-        const sortedClassrooms = classrooms.sort((a, b) => a.localeCompare(b));
+        const resources = await adeAPI.getResources({ detail: 3 }); // Get all resources
+        const classrooms = filterClassrooms(resources); // Filter classrooms
+        const excludeClassrooms = filterOutLabsExamsLocked(classrooms); // Filter out labs, exams, and locked classrooms
+
+        const availableClassroom = await getAvailableClassroom(adeAPI, excludeClassrooms, date, startHour, endHour);
+        const sortedClassrooms = availableClassroom.sort((a, b) => a.localeCompare(b));
 
         const filteredClassrooms = epis !== -1 ? sortedClassrooms.filter(classroom => parseInt(classroom[0]) === epis) : sortedClassrooms; // Filter classrooms by epis
 

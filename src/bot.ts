@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 // Import commands
 import { ping } from "./commands/ping";
 import { recherche_salles } from "./commands/recherche_salles";
+import { statut_salle } from "./commands/statut_salle";
 import { sendErrorEmbed } from "./utils/embed";
 
 const ERROR_COMMAND = "Uh ! Oh ! Il s'emblerait qu'une erreur soit survenue lors de l'exécution de la commande !";
@@ -14,7 +15,7 @@ export const client = new Client( { intents: GatewayIntentBits.Guilds } ); // Cr
 
 const rest = new REST().setToken( process.env.DISCORD_TOKEN as string ); // Create a new REST client and set the token
 
-const commands = [ ping, recherche_salles ]; // List of commands
+const commands = [ ping, recherche_salles, statut_salle ]; // List of commands
 
 client.once(Events.ClientReady, async () => {
     console.log("Bot is ready!");
