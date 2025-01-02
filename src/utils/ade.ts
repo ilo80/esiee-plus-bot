@@ -1,7 +1,7 @@
 import { ADEPlanningAPI, Resources } from "ade-planning-api";
 import { sleep } from "./sleep";
-import { convertStringToTime, doTimeRangeOverlap, Time } from "./time";
-import { Resource } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
+import { addTime, convertStringToTime, doTimeRangeOverlap, compareTimes, Time } from "./time";
+import { Events } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
 import { convertDateToDateStringMMDDYYYY } from "./date";
 
 export const initializeAPI = async () => {
@@ -18,7 +18,7 @@ export const initializeAPI = async () => {
 export const filterClassrooms = (resources: Resources) => {
     return resources.filter((resource) =>
         resource.category === "classroom" && // Filter only classrooms
-        /^[0-9]{4}(?:[+]|V(?:[+])?)?$/.test(resource.name) // Filter only classrooms with a valid name
+        /^[0-9]{4}(?:V|\+|V\+|V\+\+)?$/.test(resource.name) // Filter only classrooms with a valid name
     );
 };
 
@@ -33,10 +33,7 @@ export const filterOutLabsExamsLocked = (classrooms: Resources) => {
     );
 };
 
-
-export const checkClassroomAvailability = async (api: ADEPlanningAPI, classroomResource: Resource, date: Date, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroomResource.id, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
-
+export const checkClassroomAvailability = async (events: Events, startHour: Time, endHour: Time) => {
     for (const event of events) {
         if (doTimeRangeOverlap(startHour, endHour, convertStringToTime(event.startHour), convertStringToTime(event.endHour))) { // Check if the classroom is available
             return false;
@@ -50,7 +47,9 @@ export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: Res
     const availableClassroom = [] as string[];
 
     for (const classroomResource of classrooms) {
-        const isAvailable = await checkClassroomAvailability(api, classroomResource, date, startHour, endHour); // Check if the classroom is available
+        const events = await api.getEvents({ resources: classroomResource.id, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
+
+        const isAvailable = await checkClassroomAvailability(events, startHour, endHour); // Check if the classroom is available
 
         if (isAvailable) {
             availableClassroom.push(classroomResource.name);
@@ -62,9 +61,34 @@ export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: Res
     return availableClassroom;
 };
 
-
 export const correctClassroomName = (classrooms: Resources, classroom: string) => {
     const formattedClassroom = classroom.length === 3 ? `0${classroom}` : classroom; // Add a 0 at the beginning of the classroom name if it's only 3 characters long
 
     return classrooms.find((classroomResource) => classroomResource.name.includes(formattedClassroom))?.name;
 };
+
+export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: string, date: Date, startHour: Time, endHour: Time) => {
+    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
+
+    let freeDuration = 0;
+    let currentStartHour = startHour;
+
+    while (compareTimes(currentStartHour, endHour) < 0) {
+        const currentEndHour = addTime(currentStartHour, 1); // Add 1 minute to the current hour
+
+        if (compareTimes(currentEndHour, endHour) > 0) {
+            break;
+        };
+
+        const isAvailable = await checkClassroomAvailability(events, currentStartHour, currentEndHour); // Check if the classroom is available
+
+        if (!isAvailable) {
+            break;
+        }
+
+        freeDuration ++;
+        currentStartHour = currentEndHour;
+    }
+
+    return { hours: Math.floor(freeDuration / 60), minutes: freeDuration % 60 } as Time; // Return the free duration
+}
