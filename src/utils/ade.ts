@@ -110,3 +110,13 @@ export const getClassroomInformations = async (classroom: Resource) => {
         capacity: classroom.size,
     };
 };
+
+export const getClassroomResource = async (api: ADEPlanningAPI, classroomId: number) => {
+    const resources = await api.getResources({ detail: 11, id: classroomId }); // Get all resources
+
+    if (resources.length !== 1) {
+        throw new Error("Invalid classroom resource");
+    }
+
+    return resources[0];
+};
