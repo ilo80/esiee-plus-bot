@@ -58,6 +58,7 @@ Once the bot is running:
 2. Interact with the bot using :
    - `/edt` : Find available rooms for a given period!
    - `/ping` : Return bot latency
+   - `/statut_salle`: Get statusof a classroom, including its availability, lock status, board type, equipment, and capacity.
 
 ## Contributing
 Contributions are welcome! Here's how you can help:
