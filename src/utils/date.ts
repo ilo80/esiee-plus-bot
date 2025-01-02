@@ -11,19 +11,11 @@ export const convertDateStringMMDDYYYYToDate = (date: string) => {
 };
 
 export const convertDateToDateStringDDMMYYYY = (date: Date) => {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
+    return date.toLocaleDateString("fr-FR");
 };
 
 export const convertDateToDateStringMMDDYYYY = (date: Date) => {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-
-    return `${month}/${day}/${year}`;
+    return date.toLocaleDateString("en-US")
 };
 
 export const isValidDateString = (date: string) => {
