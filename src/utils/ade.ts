@@ -100,7 +100,7 @@ export const getClassroomInformations = async (classroom: Resource) => {
     const boardType = splittedInfo.find((info) => info.toLowerCase().includes("tableau")) ?? "Aucun"; // Get the board type
     const formattedBoardType = boardType.charAt(0).toUpperCase() + boardType.slice(1); // Format the board type
 
-    const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")).toString().replace(/,/g, ", "); // Get other equipments
+    const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")); // Get other equipments
 
     return {
         id: classroom.id,
