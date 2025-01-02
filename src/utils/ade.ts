@@ -102,9 +102,12 @@ export const getClassroomInformations = async (classroom: Resource) => {
 
     const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")); // Get other equipments
 
+    const locked = classroom.name.endsWith("+") || classroom.name.endsWith("V") || classroom.name.endsWith("V+") || classroom.name.endsWith("V++"); // Check if the classroom is locked
+
     return {
         id: classroom.id,
         name: classroom.name,
+        locked: locked,
         board: formattedBoardType,
         equipements: otherEquipments,
         capacity: classroom.size,
