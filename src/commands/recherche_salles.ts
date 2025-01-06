@@ -56,7 +56,7 @@ export const recherche_salles = {
             return;
         }
 
-        if (startHourString >= endHourString) {
+        if (convertTimeToString(startHour) >= convertTimeToString(endHour)) {
             await sendErrorEmbed(interaction, ERROR_START_AFTER_END);
             return;
         }
