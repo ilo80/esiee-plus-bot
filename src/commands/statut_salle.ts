@@ -50,12 +50,13 @@ export const statut_salle = {
         const classroomId = (classrooms.find((classroom) => classroom.name === correctedClassroom) as Resource).id; // Find the classroom resource
 
         const now = new Date(); // Get the current date
-        const time = { hours: now.getHours(), minutes: now.getMinutes() } as Time; // Get the current time
-        const endTime = { hours: 22, minutes: 0 } as Time; // Set the end time to 20:00
 
-        const freeDuration = await getClassroomFreeDuration(api, correctedClassroom, now, time, endTime); // Get the free duration of the classroom
-        const occupiedDuration = await getClassroomOccupiedDuration(api, correctedClassroom, now, time, endTime); // Get the occupied duration of the classroom
-        
+        const time = { hours: now.getHours(), minutes: now.getMinutes() } as Time; // Get the current time
+        const endTime = { hours: 22, minutes: 0 } as Time; // Set the end time to 22:00
+
+        const freeDuration = await getClassroomFreeDuration(api, classroomId, now, time, endTime); // Get the free duration of the classroom
+        const occupiedDuration = await getClassroomOccupiedDuration(api, classroomId, now, time, endTime); // Get the occupied duration of the classroom
+
         const classroomResource = await getClassroomResource(api, classroomId); // Get the classroom resource$
 
         const statut = freeDuration.hours > 0 || freeDuration.minutes > 0; // Check if the classroom is free
@@ -68,9 +69,15 @@ export const statut_salle = {
 
         const embed = new EmbedBuilder()
             .setTitle(`Statut de la salle ${correctedClassroom}`)
-            .setDescription(`${emojis.statusEmoji} **Statut** : ${statut ? "Ouverte" : "Fermée"}\n${emojis.lockedEmoji} **Verrouillée** : ${infos.locked ? "Oui" : "Non"}\n${!infos.locked && (freeDuration.hours || freeDuration.minutes) ? `🕑 **Durée de disponibilité** : ${freeDuration.hours}h${freeDuration.minutes.toString().padStart(2, "0")}\n` : (!infos.locked && freeDuration.hours === 0 && freeDuration.minutes === 0 ? `🕑 **Salle disponible dans** : ${occupiedDuration.hours}h${occupiedDuration.minutes.toString().padStart(2, "0")}\n` : "")}${emojis.boardEmoji} **Tableau** : ${infos.board}\n${infos.equipements && infos.equipements.length > 0 ? `🖨️ **Equipements** : ${infos.equipements.join(", ")}\n` : ""}${emojis.capacityEmoji} **Capacité** : ${infos.capacity} personnes`)
+            .setDescription(`${infos.locked && statut ? `${emojis.lockedEmoji} **Statut** : Verrouillée` : `${emojis.statusEmoji} **Statut** : ${statut ? "Disponible" : "Occupée"}`}\n${
+                !infos.locked && (freeDuration.hours || freeDuration.minutes) 
+                    ? `🕑 **Durée de disponibilité** : ${freeDuration.hours}h${freeDuration.minutes.toString().padStart(2, "0")} (${new Date(Date.now() + freeDuration.hours * 60 * 60 * 1000 + freeDuration.minutes * 60 * 1000).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })})\n`
+                    : (!infos.locked && freeDuration.hours === 0 && freeDuration.minutes === 0 
+                        ? `🕑 **Salle disponible dans** : ${occupiedDuration.hours}h${occupiedDuration.minutes.toString().padStart(2, "0")} (${new Date(Date.now() + occupiedDuration.hours * 60 * 60 * 1000 + occupiedDuration.minutes * 60 * 1000).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })})\n`
+                        : "")
+            }${emojis.boardEmoji} **Tableau** : ${infos.board}\n${infos.equipements && infos.equipements.length > 0 ? `🖨️ **Equipements** : ${infos.equipements.join(", ")}\n` : ""}${emojis.capacityEmoji} **Capacité** : ${infos.capacity} personnes`)
             .setColor(embedColor)
-            .setTimestamp(); 
+            .setTimestamp();
 
         interaction.editReply({ embeds: [ embed ]}); // Reply with the classroom informations	
     }

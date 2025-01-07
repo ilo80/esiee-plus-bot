@@ -29,7 +29,8 @@ export const filterOutLabsExamsLocked = (classrooms: Resources) => {
         !classroom.path.toLowerCase().includes("examens") && // Filter out exams
         !classroom.name.startsWith("6") && // Filter out classrooms of the 6th epis
         classroom.name !== "0351" && // Filter out the 0351 classroom
-        classroom.name !== "0244" // Filter out the 0244 classroom
+        classroom.name !== "0244" && // Filter out the 0244 classroom
+        classroom.info.toLowerCase().includes("réservé")
     );
 };
 
@@ -67,9 +68,8 @@ export const correctClassroomName = (classrooms: Resources, classroom: string) =
     return classrooms.find((classroomResource) => classroomResource.name.includes(formattedClassroom))?.name;
 };
 
-export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: string, date: Date, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
-
+export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: number, date: Date, startHour: Time, endHour: Time) => {
+    const events = await api.getEvents({ resources: classroom.toString(), date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
     let freeDuration = 0;
     let currentStartHour = startHour;
 
@@ -93,8 +93,8 @@ export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: s
     return { hours: Math.floor(freeDuration / 60), minutes: freeDuration % 60 } as Time; // Return the free duration
 }
 
-export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroom: string, date: Date, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Récupère tous les événements de la salle à la date spécifiée
+export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroom: number, date: Date, startHour: Time, endHour: Time) => {
+    const events = await api.getEvents({ resources: classroom.toString(), date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Récupère tous les événements de la salle à la date spécifiée
 
     let occupiedDuration = 0;
     let currentStartHour = startHour;
@@ -107,11 +107,12 @@ export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroo
         };
 
         const isOccupied = !(await checkClassroomAvailability(events, currentStartHour, currentEndHour)); // Vérifie si la salle est occupée
-
-        if (isOccupied) {
-            occupiedDuration++;
+    
+        if (!isOccupied) {
+            break;
         }
-
+        
+        occupiedDuration ++;
         currentStartHour = currentEndHour;
     }
 
@@ -126,16 +127,16 @@ export const getClassroomInformations = async (classroom: Resource) => {
     const boardType = splittedInfo.find((info) => info.toLowerCase().includes("tableau")) ?? "Aucun"; // Get the board type
     const formattedBoardType = boardType.charAt(0).toUpperCase() + boardType.slice(1); // Format the board type
 
-    const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")); // Get other equipments
+    const locked = classroom.name.endsWith("+") || classroom.name.endsWith("V") || classroom.name.endsWith("V+") || classroom.name.endsWith("V++") || classroom.info.toLowerCase().includes("réservé"); // Check if the classroom is locked
 
-    const locked = classroom.name.endsWith("+") || classroom.name.endsWith("V") || classroom.name.endsWith("V+") || classroom.name.endsWith("V++"); // Check if the classroom is locked
+    const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")); // Get other equipments
 
     return {
         id: classroom.id,
         name: classroom.name,
         locked: locked,
         board: formattedBoardType,
-        equipements: otherEquipments,
+        equipements: locked ? [] : otherEquipments,
         capacity: classroom.size,
     };
 };
