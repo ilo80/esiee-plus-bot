@@ -29,7 +29,8 @@ export const filterOutLabsExamsLocked = (classrooms: Resources) => {
         !classroom.path.toLowerCase().includes("examens") && // Filter out exams
         !classroom.name.startsWith("6") && // Filter out classrooms of the 6th epis
         classroom.name !== "0351" && // Filter out the 0351 classroom
-        classroom.name !== "0244" // Filter out the 0244 classroom
+        classroom.name !== "0244" && // Filter out the 0244 classroom
+        classroom.info.toLowerCase().includes("réservé")
     );
 };
 
@@ -128,7 +129,7 @@ export const getClassroomInformations = async (classroom: Resource) => {
 
     const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")); // Get other equipments
 
-    const locked = classroom.name.endsWith("+") || classroom.name.endsWith("V") || classroom.name.endsWith("V+") || classroom.name.endsWith("V++"); // Check if the classroom is locked
+    const locked = classroom.name.endsWith("+") || classroom.name.endsWith("V") || classroom.name.endsWith("V+") || classroom.name.endsWith("V++") || classroom.info.toLowerCase().includes("réservé"); // Check if the classroom is locked
 
     return {
         id: classroom.id,
