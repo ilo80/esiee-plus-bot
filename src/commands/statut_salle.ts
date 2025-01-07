@@ -69,9 +69,9 @@ export const statut_salle = {
 
         const embed = new EmbedBuilder()
             .setTitle(`Statut de la salle ${correctedClassroom}`)
-            .setDescription(`${emojis.statusEmoji} **Statut** : ${statut ? "Ouverte" : "Fermée"}\n${emojis.lockedEmoji} **Verrouillée** : ${infos.locked ? "Oui" : "Non"}\n${!infos.locked && (freeDuration.hours || freeDuration.minutes) ? `🕑 **Durée de disponibilité** : ${freeDuration.hours}h${freeDuration.minutes.toString().padStart(2, "0")}\n` : (!infos.locked && freeDuration.hours === 0 && freeDuration.minutes === 0 ? `🕑 **Salle disponible dans** : ${occupiedDuration.hours}h${occupiedDuration.minutes.toString().padStart(2, "0")}\n` : "")}${emojis.boardEmoji} **Tableau** : ${infos.board}\n${infos.equipements && infos.equipements.length > 0 ? `🖨️ **Equipements** : ${infos.equipements.join(", ")}\n` : ""}${emojis.capacityEmoji} **Capacité** : ${infos.capacity} personnes`)
+            .setDescription(`${emojis.statusEmoji} **Statut** : ${statut ? "Disponible" : "Occupée"}\n${emojis.lockedEmoji} **Verrouillée** : ${infos.locked ? "Oui" : "Non"}\n${!infos.locked && (freeDuration.hours || freeDuration.minutes) ? `🕑 **Durée de disponibilité** : ${freeDuration.hours}h${freeDuration.minutes.toString().padStart(2, "0")}\n` : (!infos.locked && freeDuration.hours === 0 && freeDuration.minutes === 0 ? `🕑 **Salle disponible dans** : ${occupiedDuration.hours}h${occupiedDuration.minutes.toString().padStart(2, "0")}\n` : "")}${emojis.boardEmoji} **Tableau** : ${infos.board}\n${infos.equipements && infos.equipements.length > 0 ? `🖨️ **Equipements** : ${infos.equipements.join(", ")}\n` : ""}${emojis.capacityEmoji} **Capacité** : ${infos.capacity} personnes`)
             .setColor(embedColor)
-            .setTimestamp(); 
+            .setTimestamp();
 
         interaction.editReply({ embeds: [ embed ]}); // Reply with the classroom informations	
     }
