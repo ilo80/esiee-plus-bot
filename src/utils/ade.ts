@@ -127,16 +127,16 @@ export const getClassroomInformations = async (classroom: Resource) => {
     const boardType = splittedInfo.find((info) => info.toLowerCase().includes("tableau")) ?? "Aucun"; // Get the board type
     const formattedBoardType = boardType.charAt(0).toUpperCase() + boardType.slice(1); // Format the board type
 
-    const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")); // Get other equipments
-
     const locked = classroom.name.endsWith("+") || classroom.name.endsWith("V") || classroom.name.endsWith("V+") || classroom.name.endsWith("V++") || classroom.info.toLowerCase().includes("réservé"); // Check if the classroom is locked
+
+    const otherEquipments = splittedInfo.filter((info) => !info.toLowerCase().includes("tableau")); // Get other equipments
 
     return {
         id: classroom.id,
         name: classroom.name,
         locked: locked,
         board: formattedBoardType,
-        equipements: otherEquipments,
+        equipements: locked ? [] : otherEquipments,
         capacity: classroom.size,
     };
 };
