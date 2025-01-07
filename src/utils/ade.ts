@@ -30,7 +30,8 @@ export const filterOutLabsExamsLocked = (classrooms: Resources) => {
         !classroom.name.startsWith("6") && // Filter out classrooms of the 6th epis
         classroom.name !== "0351" && // Filter out the 0351 classroom
         classroom.name !== "0244" && // Filter out the 0244 classroom
-        classroom.info.toLowerCase().includes("réservé")
+        classroom.name !== "3109" &&
+        classroom.name !== "0163"
     );
 };
 
