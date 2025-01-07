@@ -50,12 +50,13 @@ export const statut_salle = {
         const classroomId = (classrooms.find((classroom) => classroom.name === correctedClassroom) as Resource).id; // Find the classroom resource
 
         const now = new Date(); // Get the current date
-        const time = { hours: now.getHours(), minutes: now.getMinutes() } as Time; // Get the current time
-        const endTime = { hours: 22, minutes: 0 } as Time; // Set the end time to 20:00
 
-        const freeDuration = await getClassroomFreeDuration(api, correctedClassroom, now, time, endTime); // Get the free duration of the classroom
-        const occupiedDuration = await getClassroomOccupiedDuration(api, correctedClassroom, now, time, endTime); // Get the occupied duration of the classroom
-        
+        const time = { hours: now.getHours(), minutes: now.getMinutes() } as Time; // Get the current time
+        const endTime = { hours: 22, minutes: 0 } as Time; // Set the end time to 22:00
+
+        const freeDuration = await getClassroomFreeDuration(api, classroomId, now, time, endTime); // Get the free duration of the classroom
+        const occupiedDuration = await getClassroomOccupiedDuration(api, classroomId, now, time, endTime); // Get the occupied duration of the classroom
+
         const classroomResource = await getClassroomResource(api, classroomId); // Get the classroom resource$
 
         const statut = freeDuration.hours > 0 || freeDuration.minutes > 0; // Check if the classroom is free

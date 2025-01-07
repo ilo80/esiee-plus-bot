@@ -67,9 +67,8 @@ export const correctClassroomName = (classrooms: Resources, classroom: string) =
     return classrooms.find((classroomResource) => classroomResource.name.includes(formattedClassroom))?.name;
 };
 
-export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: string, date: Date, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
-
+export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: number, date: Date, startHour: Time, endHour: Time) => {
+    const events = await api.getEvents({ resources: classroom.toString(), date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
     let freeDuration = 0;
     let currentStartHour = startHour;
 
@@ -93,8 +92,8 @@ export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: s
     return { hours: Math.floor(freeDuration / 60), minutes: freeDuration % 60 } as Time; // Return the free duration
 }
 
-export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroom: string, date: Date, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Récupère tous les événements de la salle à la date spécifiée
+export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroom: number, date: Date, startHour: Time, endHour: Time) => {
+    const events = await api.getEvents({ resources: classroom.toString(), date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Récupère tous les événements de la salle à la date spécifiée
 
     let occupiedDuration = 0;
     let currentStartHour = startHour;
@@ -107,11 +106,12 @@ export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroo
         };
 
         const isOccupied = !(await checkClassroomAvailability(events, currentStartHour, currentEndHour)); // Vérifie si la salle est occupée
-
-        if (isOccupied) {
-            occupiedDuration++;
+    
+        if (!isOccupied) {
+            break;
         }
-
+        
+        occupiedDuration ++;
         currentStartHour = currentEndHour;
     }
 
