@@ -69,7 +69,13 @@ export const statut_salle = {
 
         const embed = new EmbedBuilder()
             .setTitle(`Statut de la salle ${correctedClassroom}`)
-            .setDescription(`${infos.locked && statut ? `${emojis.lockedEmoji} **Statut** : Verrouillée` : `${emojis.statusEmoji} **Statut** : ${statut ? "Disponible" : "Occupée"}`}\n${!infos.locked && (freeDuration.hours || freeDuration.minutes) ? `🕑 **Durée de disponibilité** : ${freeDuration.hours}h${freeDuration.minutes.toString().padStart(2, "0")}\n` : (!infos.locked && freeDuration.hours === 0 && freeDuration.minutes === 0 ? `🕑 **Salle disponible dans** : ${occupiedDuration.hours}h${occupiedDuration.minutes.toString().padStart(2, "0")}\n` : "")}${emojis.boardEmoji} **Tableau** : ${infos.board}\n${infos.equipements && infos.equipements.length > 0 ? `🖨️ **Equipements** : ${infos.equipements.join(", ")}\n` : ""}${emojis.capacityEmoji} **Capacité** : ${infos.capacity} personnes`)
+            .setDescription(`${infos.locked && statut ? `${emojis.lockedEmoji} **Statut** : Verrouillée` : `${emojis.statusEmoji} **Statut** : ${statut ? "Disponible" : "Occupée"}`}\n${
+                !infos.locked && (freeDuration.hours || freeDuration.minutes) 
+                    ? `🕑 **Durée de disponibilité** : ${freeDuration.hours}h${freeDuration.minutes.toString().padStart(2, "0")} (${new Date(Date.now() + freeDuration.hours * 60 * 60 * 1000 + freeDuration.minutes * 60 * 1000).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })})\n`
+                    : (!infos.locked && freeDuration.hours === 0 && freeDuration.minutes === 0 
+                        ? `🕑 **Salle disponible dans** : ${occupiedDuration.hours}h${occupiedDuration.minutes.toString().padStart(2, "0")} (${new Date(Date.now() + occupiedDuration.hours * 60 * 60 * 1000 + occupiedDuration.minutes * 60 * 1000).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })})\n`
+                        : "")
+            }${emojis.boardEmoji} **Tableau** : ${infos.board}\n${infos.equipements && infos.equipements.length > 0 ? `🖨️ **Equipements** : ${infos.equipements.join(", ")}\n` : ""}${emojis.capacityEmoji} **Capacité** : ${infos.capacity} personnes`)
             .setColor(embedColor)
             .setTimestamp();
 
