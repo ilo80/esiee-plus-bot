@@ -6,7 +6,7 @@ import { convertDateStringDDMMYYYYToDate, convertDateToDateStringDDMMYYYY, isVal
 
 const ERROR_INVALID_DATE = "Il semblerait que la date renseignée ne soit pas valide !\nVeuillez renseigner une date au format `jj/mm/aaaa`.";
 const ERROR_INVALID_TIME = "Il semblerait que l'heure de début ou de fin renseignée ne soit pas valide !\nVeuillez renseigner une heure au format `hh:mm`.";
-const ERROR_INVALID_EPIS = "Il semblerait que l'épis renseigné ne soit pas valide !\nVeuillez renseigner un numéro d'épis entre 0 et 6.";
+const ERROR_INVALID_EPIS = "Il semblerait que l'épi renseigné ne soit pas valide !\nVeuillez renseigner un numéro d'épi entre 0 et 6.";
 const ERROR_START_AFTER_END = "Il semblerait que l'heure de début soit supérieure ou égale à l'heure de fin !\nVeuillez renseigner une heure de début inférieure à l'heure de fin.";
 const NO_CLASSROOMS_AVAILABLE = "Aucune salle n'est disponible à cette période !\nVeuillez réessayer avec une autre période.";
 
@@ -17,7 +17,7 @@ export const recherche_salles = {
         { name: "date", description: "La date à laquelle tu veux trouver des salles libres", type: ApplicationCommandOptionType.String, required: false },
         { name: "debut", description: "L'heure de début de la période", type: ApplicationCommandOptionType.String, required: false },
         { name: "fin", description: "L'heure de fin de la période", type: ApplicationCommandOptionType.String, required: false },
-        { name: "epis", description: "L'épis dans lequel tu veux faire la recherche", type: ApplicationCommandOptionType.Integer, required: false }
+        { name: "epis", description: "L'épi dans lequel tu veux faire la recherche", type: ApplicationCommandOptionType.Integer, required: false }
     ],
 
     async execute(interaction: CommandInteraction) {
@@ -93,7 +93,7 @@ export const recherche_salles = {
 
         const embedField = Object.keys(groupedClassrooms).map(epis => {
             return {
-                name: `Épis ${epis}`,
+                name: `Épi ${epis}`,
                 value: groupedClassrooms[parseInt(epis)].map(classroom => `- ${classroom}`).join("\n"),
                 inline: true
             };
