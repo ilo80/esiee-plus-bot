@@ -1,8 +1,8 @@
-import { ADEPlanningAPI, Resources } from "ade-planning-api";
+import { ADEPlanningAPI } from "ade-planning-api";
 import { sleep } from "./sleep";
 import { addTime, convertStringToTime, doTimeRangeOverlap, compareTimes, Time } from "./time";
-import { Events, Resource } from "ade-planning-api/dist/models/timetable"; // Import the Resource type from the ade-planning-api package
 import { convertDateToDateStringMMDDYYYY } from "./date";
+import { EventByDetail, ResourceByDetail } from "ade-planning-api/dist/models/timetable";
 
 export const initializeAPI = async () => {
     const api = new ADEPlanningAPI(process.env.ADE_LINK as string);
@@ -15,14 +15,14 @@ export const initializeAPI = async () => {
     return api;
 };
 
-export const filterClassrooms = (resources: Resources) => {
+export const filterClassrooms = (resources: ResourceByDetail<3>[]) => {
     return resources.filter((resource) =>
         resource.category === "classroom" && // Filter only classrooms
         /^[0-9]{4}(?:V|\+|V\+|V\+\+)?$/.test(resource.name) // Filter only classrooms with a valid name
     );
 };
 
-export const filterOutLabsExamsLocked = (classrooms: Resources) => {
+export const filterOutLabsExamsLocked = (classrooms: ResourceByDetail<3>[]) => {
     return classrooms.filter((classroom) =>
         /^[0-9]+$/.test(classroom.name) && // Filter only classrooms with a number
         !classroom.path.toLowerCase().includes("labos") && // Filter out labs
@@ -35,7 +35,7 @@ export const filterOutLabsExamsLocked = (classrooms: Resources) => {
     );
 };
 
-export const checkClassroomAvailability = async (events: Events, startHour: Time, endHour: Time) => {
+export const checkClassroomAvailability = async (events: EventByDetail<3>[], startHour: Time, endHour: Time) => {
     for (const event of events) {
         if (doTimeRangeOverlap(startHour, endHour, convertStringToTime(event.startHour), convertStringToTime(event.endHour))) { // Check if the classroom is available
             return false;
@@ -45,7 +45,7 @@ export const checkClassroomAvailability = async (events: Events, startHour: Time
     return true;
 };
 
-export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: Resources, date: Date, startHour: Time, endHour: Time) => {
+export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: ResourceByDetail<2>[], date: Date, startHour: Time, endHour: Time) => {
     const availableClassroom = [] as string[];
 
     for (const classroomResource of classrooms) {
@@ -63,14 +63,14 @@ export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: Res
     return availableClassroom;
 };
 
-export const correctClassroomName = (classrooms: Resources, classroom: string) => {
+export const correctClassroomName = (classrooms: ResourceByDetail<2>[], classroom: string) => {
     const formattedClassroom = classroom.length === 3 ? `0${classroom}` : classroom; // Add a 0 at the beginning of the classroom name if it's only 3 characters long
 
     return classrooms.find((classroomResource) => classroomResource.name.includes(formattedClassroom))?.name;
 };
 
 export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: number, date: Date, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroom.toString(), date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
+    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
     let freeDuration = 0;
     let currentStartHour = startHour;
 
@@ -95,7 +95,7 @@ export const getClassroomFreeDuration = async (api: ADEPlanningAPI, classroom: n
 }
 
 export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroom: number, date: Date, startHour: Time, endHour: Time) => {
-    const events = await api.getEvents({ resources: classroom.toString(), date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Récupère tous les événements de la salle à la date spécifiée
+    const events = await api.getEvents({ resources: classroom, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Récupère tous les événements de la salle à la date spécifiée
 
     let occupiedDuration = 0;
     let currentStartHour = startHour;
@@ -121,7 +121,7 @@ export const getClassroomOccupiedDuration = async (api: ADEPlanningAPI, classroo
 }
 
 
-export const getClassroomInformations = async (classroom: Resource) => {
+export const getClassroomInformations = async (classroom: ResourceByDetail<11>) => {
     const classroomInfo = classroom.info; // classroom.info = equipment
     const splittedInfo = classroomInfo.split(", ") // Split equipements
 
