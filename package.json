@@ -16,7 +16,7 @@
   "license": "GPL-3.0-only",
   "dependencies": {
     "@types/node": "^22.10.2",
-    "ade-planning-api": "^1.0.3",
+    "ade-planning-api": "^1.0.4",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.7",
     "ts-node": "^10.9.2",
