@@ -1,7 +1,6 @@
-import { ADEPlanningAPI } from "ade-planning-api";
+import { ADEPlanningAPI, EventByDetail, ResourceByDetail } from "ade-planning-api";
 import { addTime, convertStringToTime, doTimeRangeOverlap, compareTimes, Time } from "./time";
 import { convertDateToDateStringMMDDYYYY } from "./date";
-import { EventByDetail, ResourceByDetail } from "ade-planning-api/dist/models/timetable";
 
 export const initializeAPI = async () => {
     const api = new ADEPlanningAPI(process.env.ADE_LINK as string);
