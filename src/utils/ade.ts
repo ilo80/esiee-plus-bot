@@ -1,5 +1,4 @@
 import { ADEPlanningAPI } from "ade-planning-api";
-import { sleep } from "./sleep";
 import { addTime, convertStringToTime, doTimeRangeOverlap, compareTimes, Time } from "./time";
 import { convertDateToDateStringMMDDYYYY } from "./date";
 import { EventByDetail, ResourceByDetail } from "ade-planning-api/dist/models/timetable";
@@ -48,20 +47,19 @@ export const checkClassroomAvailability = async (events: EventByDetail<3>[], sta
 export const getAvailableClassroom = async (api: ADEPlanningAPI, classrooms: ResourceByDetail<2>[], date: Date, startHour: Time, endHour: Time) => {
     const availableClassroom = [] as string[];
 
-    for (const classroomResource of classrooms) {
-        const events = await api.getEvents({ resources: classroomResource.id, date: convertDateToDateStringMMDDYYYY(date), detail: 3 }); // Get all events of the classroom in the specified date
+    const events = await api.getEvents({ date: convertDateToDateStringMMDDYYYY(date), detail: 8 }); // Get all events of the date
 
-        const isAvailable = await checkClassroomAvailability(events, startHour, endHour); // Check if the classroom is available
+    for (const classroom of classrooms) {
+        const isAvailable = await checkClassroomAvailability(events.filter((event) => event.resources.some((resource) => resource.id === classroom.id)), startHour, endHour); // Check if the classroom is available
 
         if (isAvailable) {
-            availableClassroom.push(classroomResource.name);
+            availableClassroom.push(classroom.name);
         }
-
-        await sleep(100); // Sleep 100ms to avoid being banned
     }
 
     return availableClassroom;
 };
+
 
 export const correctClassroomName = (classrooms: ResourceByDetail<2>[], classroom: string) => {
     const formattedClassroom = classroom.length === 3 ? `0${classroom}` : classroom; // Add a 0 at the beginning of the classroom name if it's only 3 characters long
