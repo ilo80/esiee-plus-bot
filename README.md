@@ -56,9 +56,9 @@ The bot uses a `.env` file for its configuration. Below are the variables you ne
 Once the bot is running:
 1. Invite it to your Discord server using the OAuth2 URL from the Discord Developer Portal
 2. Interact with the bot using :
-   - `/edt` : Find available rooms for a given period!
+   - `/recherche_salle` : Find available rooms for a given period!
    - `/ping` : Return bot latency
-   - `/statut_salle`: Get statusof a classroom, including its availability, lock status, board type, equipment, and capacity.
+   - `/statut_salle`: Get status of a classroom, including its availability, lock status, board type, equipment, and capacity.
 
 ## Contributing
 Contributions are welcome! Here's how you can help:
