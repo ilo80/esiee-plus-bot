@@ -33,8 +33,8 @@ export const recherche_salles = {
         }
 
         const date = convertDateStringDDMMYYYYToDate(dateString); // Convert the date to a Date object
-        
         const year = date.getFullYear();
+        
         if (year < 2024 || year > 2026) {
             await sendErrorEmbed(interaction, ERROR_INVALID_YEAR);
             return;
