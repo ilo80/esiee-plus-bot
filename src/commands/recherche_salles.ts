@@ -8,6 +8,7 @@ const ERROR_INVALID_DATE = "Il semblerait que la date renseignée ne soit pas va
 const ERROR_INVALID_TIME = "Il semblerait que l'heure de début ou de fin renseignée ne soit pas valide !\nVeuillez renseigner une heure au format `hh:mm`.";
 const ERROR_INVALID_EPIS = "Il semblerait que l'épi renseigné ne soit pas valide !\nVeuillez renseigner un numéro d'épi entre 0 et 6.";
 const ERROR_START_AFTER_END = "Il semblerait que l'heure de début soit supérieure ou égale à l'heure de fin !\nVeuillez renseigner une heure de début inférieure à l'heure de fin.";
+const ERROR_INVALID_YEAR = "La recherche d'années doit se faire entre 2024 et 2026.";
 const NO_CLASSROOMS_AVAILABLE = "Aucune salle n'est disponible à cette période !\nVeuillez réessayer avec une autre période.";
 
 export const recherche_salles = {
@@ -32,7 +33,13 @@ export const recherche_salles = {
         }
 
         const date = convertDateStringDDMMYYYYToDate(dateString); // Convert the date to a Date object
+        const year = date.getFullYear();
         
+        if (year < 2024 || year > 2026) {
+            await sendErrorEmbed(interaction, ERROR_INVALID_YEAR);
+            return;
+        }
+
         const startHourString = interaction.options.get("debut")?.value as string ?? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }); // Get the start hour if provided, the current hour otherwise
 
         if (!isValidTimeString(startHourString)) {
