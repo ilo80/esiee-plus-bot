@@ -4,7 +4,8 @@ export type Time = {
 };
 
 export const isValidTimeString = (time: string) => {
-    const parts = time.split(':').map(Number);
+    const normalizedTime = time.replace(/[hH]/g, ":");
+    const parts = normalizedTime.split(':').map(Number);
 
     if (parts.length !== 2) {
         return false;
@@ -21,8 +22,9 @@ export const convertStringToTime = (time: string) => {
     if (!isValidTimeString(time)) {
         throw new Error('Invalid time format');
     }
-
-    const [hours, minutes] = time.split(':').map(Number);
+    
+    const normalizedTime = time.replace(/[hH]/g, ":");
+    const [hours, minutes] = normalizedTime.split(':').map(Number);
 
     return { hours, minutes } as Time;
 };
