@@ -55,10 +55,10 @@ The bot uses a `.env` file for its configuration. Below are the variables you ne
 ## Usage
 Once the bot is running:
 1. Invite it to your Discord server using the OAuth2 URL from the Discord Developer Portal
-2. Interact with the bot using :
-   - `/recherche_salle` : Find available rooms for a given period!
-   - `/ping` : Return bot latency
-   - `/statut_salle`: Get status of a classroom, including its availability, lock status, board type, equipment, and capacity.
+2. Interact with the bot using:
+   - `/recherche_salle`: Find available rooms for a given period
+   - `/ping`: Return bot latency
+   - `/statut_salle`: Get status of a classroom, including its availability, lock status, board type, equipment, and capacity
 
 ## Contributing
 Contributions are welcome! Here's how you can help:
@@ -67,17 +67,17 @@ Contributions are welcome! Here's how you can help:
    ```bash
    git checkout -b feature/your-feature-name
    ```
-3. Commit your changes using conventional commit messages. Examples
+3. Commit your changes using conventional commit messages:
    - `feat: add new command to check room availability by building`
    - `fix: handle edge cases when ADE is unreachable`
    - `docs: update usage examples in README`
      
-   Refer to [Conventional Commits](https://www.conventionalcommits.org/) for details.
+   Refer to [Conventional Commits](https://www.conventionalcommits.org/) for details
 4. Push to your branch:
    ```bash
    git push origine feature/your-feature-name
    ```
-5. Open a pull request.
+5. Open a pull request
 
 ## License
 This project is licensed under the [GPL 3.0 License](https://github.com/ilo80/esiee-plus-bot/blob/main/LICENSE.md)
