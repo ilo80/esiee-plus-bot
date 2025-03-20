@@ -73,11 +73,11 @@ Contributions are welcome! Here's how you can help:
    - `docs: update usage examples in README`
      
    Refer to [Conventional Commits](https://www.conventionalcommits.org/) for details
-5. Push to your branch:
+4. Push to your branch:
    ```bash
    git push origine feature/your-feature-name
    ```
-6. Open a pull request
+5. Open a pull request
 
 ## License
 This project is licensed under the [GPL 3.0 License](https://github.com/ilo80/esiee-plus-bot/blob/main/LICENSE.md)
